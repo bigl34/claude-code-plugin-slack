@@ -1,0 +1,5 @@
+{
+  "name": "slack-manager",
+  "version": "1.1.8",
+  "description": "Dedicated agent for Slack workspace operations with isolated MCP access"
+}
