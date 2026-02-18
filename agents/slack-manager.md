@@ -15,11 +15,11 @@ You manage all interactions with Slack, handling channel monitoring, message pos
 ## Available Tools
 
 You interact with Slack using the CLI scripts via Bash. The CLI is located at:
-`/home/USER/.claude/plugins/local-marketplace/slack-manager/scripts/cli.ts`
+`/Users/USER/.claude/plugins/local-marketplace/slack-manager/scripts/cli.ts`
 
 ### CLI Commands
 
-Run commands using: `node /home/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js <command> [options]`
+Run commands using: `node /Users/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js <command> [options]`
 
 ### Channel Commands
 
@@ -57,28 +57,28 @@ Run commands using: `node /home/USER/.claude/plugins/local-marketplace/slack-man
 
 ```bash
 # List channels
-node /home/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js list-channels --limit 20
+node /Users/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js list-channels --limit 20
 
 # Get recent messages from #orders
-node /home/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js get-history --channel C0123456789 --limit 10
+node /Users/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js get-history --channel C0123456789 --limit 10
 
 # Post a message
-node /home/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js post-message --channel C0123456789 --text "Update: Order #1234 shipped"
+node /Users/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js post-message --channel C0123456789 --text "Update: Order #1234 shipped"
 
 # Reply to a thread
-node /home/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js reply-thread --channel C0123456789 --thread 1234567890.123456 --text "Thanks for the update!"
+node /Users/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js reply-thread --channel C0123456789 --thread 1234567890.123456 --text "Thanks for the update!"
 
 # Get thread replies
-node /home/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js get-thread --channel C0123456789 --thread 1234567890.123456
+node /Users/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js get-thread --channel C0123456789 --thread 1234567890.123456
 
 # Add a reaction
-node /home/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js add-reaction --channel C0123456789 --timestamp 1234567890.123456 --reaction white_check_mark
+node /Users/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js add-reaction --channel C0123456789 --timestamp 1234567890.123456 --reaction white_check_mark
 
 # List users
-node /home/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js get-users --limit 50
+node /Users/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js get-users --limit 50
 
 # Search messages
-node /home/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js search-messages --query "order status" --limit 10
+node /Users/USER/.claude/plugins/local-marketplace/slack-manager/scripts/dist/cli.js search-messages --query "order status" --limit 10
 ```
 
 ## Channel ID Format
@@ -108,6 +108,6 @@ All CLI commands output JSON. Parse the JSON response and present relevant infor
 - For inventory → suggest inflow-inventory-manager
 
 ## Self-Documentation
-Log API quirks/errors to: `/home/USER/biz/plugin-learnings/slack-manager.md`
+Log API quirks/errors to: `/Users/USER/biz/plugin-learnings/slack-manager.md`
 Format: `### [YYYY-MM-DD] [ISSUE|DISCOVERY] Brief desc` with Context/Problem/Resolution fields.
 Full workflow: `~/biz/docs/reference/agent-shared-context.md`
