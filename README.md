@@ -87,28 +87,28 @@ node scripts/dist/cli.js list-channels
 
 ```bash
 # List channels
-node scripts/dist/cli.js list-channels --limit 20
+node /Users/USER/node scripts/dist/cli.js list-channels --limit 20
 
 # Get recent messages from #orders
-node scripts/dist/cli.js get-history --channel C0123456789 --limit 10
+node /Users/USER/node scripts/dist/cli.js get-history --channel C0123456789 --limit 10
 
 # Post a message
-node scripts/dist/cli.js post-message --channel C0123456789 --text "Update: Order #1234 shipped"
+node /Users/USER/node scripts/dist/cli.js post-message --channel C0123456789 --text "Update: Order #1234 shipped"
 
 # Reply to a thread
-node scripts/dist/cli.js reply-thread --channel C0123456789 --thread 1234567890.123456 --text "Thanks for the update!"
+node /Users/USER/node scripts/dist/cli.js reply-thread --channel C0123456789 --thread 1234567890.123456 --text "Thanks for the update!"
 
 # Get thread replies
-node scripts/dist/cli.js get-thread --channel C0123456789 --thread 1234567890.123456
+node /Users/USER/node scripts/dist/cli.js get-thread --channel C0123456789 --thread 1234567890.123456
 
 # Add a reaction
-node scripts/dist/cli.js add-reaction --channel C0123456789 --timestamp 1234567890.123456 --reaction white_check_mark
+node /Users/USER/node scripts/dist/cli.js add-reaction --channel C0123456789 --timestamp 1234567890.123456 --reaction white_check_mark
 
 # List users
-node scripts/dist/cli.js get-users --limit 50
+node /Users/USER/node scripts/dist/cli.js get-users --limit 50
 
 # Search messages
-node scripts/dist/cli.js search-messages --query "order status" --limit 10
+node /Users/USER/node scripts/dist/cli.js search-messages --query "order status" --limit 10
 ```
 
 ## How It Works
