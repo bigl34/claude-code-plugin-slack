@@ -5,7 +5,7 @@
  * Zod-validated CLI for Slack workspace operations via MCP.
  */
 
-import { z, createCommand, runCli, cacheCommands, cliTypes } from "@local/cli-utils";
+import { z, createCommand, runCli, cacheCommands, cliTypes, wrapUntrustedField, buildSafeOutput } from "@local/cli-utils";
 import { SlackMCPClient } from "./mcp-client.js";
 
 // Define commands with Zod schemas
@@ -29,7 +29,26 @@ const commands = {
     }),
     async (args, client: SlackMCPClient) => {
       const { limit } = args as { limit?: number };
-      return client.listChannels({ limit });
+      const result = await client.listChannels({ limit });
+
+      const channels = (result?.channels || result || []);
+      const wrappedChannels = (Array.isArray(channels) ? channels : []).map((ch: any) => ({
+        metadata: {
+          id: ch.id,
+          num_members: ch.num_members,
+          is_archived: ch.is_archived,
+        },
+        content: {
+          name: wrapUntrustedField("name", ch.name, { maxChars: 200 }),
+          topic: wrapUntrustedField("topic", ch.topic?.value || ch.topic, { maxChars: 500 }),
+          purpose: wrapUntrustedField("purpose", ch.purpose?.value || ch.purpose, { maxChars: 500 }),
+        },
+      }));
+
+      return buildSafeOutput(
+        { command: "list-channels", count: wrappedChannels.length },
+        { channels: wrappedChannels }
+      );
     },
     "List public channels"
   ),
@@ -41,7 +60,26 @@ const commands = {
     }),
     async (args, client: SlackMCPClient) => {
       const { channel, limit } = args as { channel: string; limit?: number };
-      return client.getChannelHistory(channel, limit);
+      const result = await client.getChannelHistory(channel, limit);
+
+      const messages = (result?.messages || result || []);
+      const wrappedMessages = (Array.isArray(messages) ? messages : []).map((msg: any) => ({
+        metadata: {
+          ts: msg.ts,
+          type: msg.type,
+          subtype: msg.subtype,
+          user_id: msg.user,
+        },
+        content: {
+          text: wrapUntrustedField("text", msg.text, { maxChars: 8000 }),
+          username: wrapUntrustedField("username", msg.username || msg.user_profile?.display_name, { maxChars: 200 }),
+        },
+      }));
+
+      return buildSafeOutput(
+        { command: "get-history", channel, count: wrappedMessages.length },
+        { messages: wrappedMessages }
+      );
     },
     "Get channel message history"
   ),
@@ -53,7 +91,27 @@ const commands = {
     }),
     async (args, client: SlackMCPClient) => {
       const { channel, thread } = args as { channel: string; thread: string };
-      return client.getThreadReplies(channel, thread);
+      const result = await client.getThreadReplies(channel, thread);
+
+      const messages = (result?.messages || result || []);
+      const wrappedMessages = (Array.isArray(messages) ? messages : []).map((msg: any) => ({
+        metadata: {
+          ts: msg.ts,
+          type: msg.type,
+          subtype: msg.subtype,
+          user_id: msg.user,
+          thread_ts: msg.thread_ts,
+        },
+        content: {
+          text: wrapUntrustedField("text", msg.text, { maxChars: 8000 }),
+          username: wrapUntrustedField("username", msg.username || msg.user_profile?.display_name, { maxChars: 200 }),
+        },
+      }));
+
+      return buildSafeOutput(
+        { command: "get-thread", channel, thread, count: wrappedMessages.length },
+        { messages: wrappedMessages }
+      );
     },
     "Get thread replies"
   ),
@@ -118,7 +176,26 @@ const commands = {
     }),
     async (args, client: SlackMCPClient) => {
       const { limit } = args as { limit?: number };
-      return client.getUsers({ limit });
+      const result = await client.getUsers({ limit });
+
+      const members = (result?.members || result || []);
+      const wrappedUsers = (Array.isArray(members) ? members : []).map((u: any) => ({
+        metadata: {
+          id: u.id,
+          is_bot: u.is_bot,
+          is_admin: u.is_admin,
+          deleted: u.deleted,
+        },
+        content: {
+          real_name: wrapUntrustedField("real_name", u.real_name || u.profile?.real_name, { maxChars: 200 }),
+          display_name: wrapUntrustedField("display_name", u.profile?.display_name, { maxChars: 200 }),
+        },
+      }));
+
+      return buildSafeOutput(
+        { command: "get-users", count: wrappedUsers.length },
+        { users: wrappedUsers }
+      );
     },
     "List workspace users"
   ),
@@ -129,7 +206,18 @@ const commands = {
     }),
     async (args, client: SlackMCPClient) => {
       const { user } = args as { user: string };
-      return client.getUserProfile(user);
+      const result = await client.getUserProfile(user);
+
+      const profile = result?.profile || result || {};
+      return buildSafeOutput(
+        { command: "get-user-profile", user_id: user },
+        {
+          real_name: wrapUntrustedField("real_name", profile.real_name, { maxChars: 200 }),
+          display_name: wrapUntrustedField("display_name", profile.display_name, { maxChars: 200 }),
+          status_text: wrapUntrustedField("status_text", profile.status_text, { maxChars: 500 }),
+          title: wrapUntrustedField("title", profile.title, { maxChars: 200 }),
+        }
+      );
     },
     "Get a user's profile"
   ),
@@ -142,7 +230,26 @@ const commands = {
     }),
     async (args, client: SlackMCPClient) => {
       const { query, limit } = args as { query: string; limit?: number };
-      return client.searchMessages(query, { count: limit });
+      const result = await client.searchMessages(query, { count: limit });
+
+      const matches = (result?.messages?.matches || result?.matches || result || []);
+      const wrappedMatches = (Array.isArray(matches) ? matches : []).map((m: any) => ({
+        metadata: {
+          ts: m.ts,
+          score: m.score,
+          channel_id: m.channel?.id,
+        },
+        content: {
+          text: wrapUntrustedField("text", m.text, { maxChars: 8000 }),
+          username: wrapUntrustedField("username", m.username, { maxChars: 200 }),
+          channel_name: wrapUntrustedField("channel_name", m.channel?.name, { maxChars: 200 }),
+        },
+      }));
+
+      return buildSafeOutput(
+        { command: "search-messages", query, count: wrappedMatches.length },
+        { matches: wrappedMatches }
+      );
     },
     "Search messages (requires user token)"
   ),

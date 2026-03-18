@@ -3,7 +3,7 @@
 
 Dedicated agent for Slack workspace operations with isolated MCP access
 
-![Version](https://img.shields.io/badge/version-1.1.13-blue) ![License: MIT](https://img.shields.io/badge/License-MIT-green) ![Node >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
+![Version](https://img.shields.io/badge/version-1.3.0-blue) ![License: MIT](https://img.shields.io/badge/License-MIT-green) ![Node >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 
 ## Features
 
@@ -51,14 +51,6 @@ node scripts/dist/cli.js list-channels
    ```
 4. Ensure the MCP server binary is available on your system (see the service's documentation)
 
-## Configuration
-
-Copy `config.template.json` to `config.json` and fill in the required values:
-
-| Field | Placeholder |
-|-------|-------------|
-| `credentials_path` | `/path/to/your/credentials` |
-
 ## Available Commands
 
 ### Channel Commands
@@ -95,28 +87,28 @@ Copy `config.template.json` to `config.json` and fill in the required values:
 
 ```bash
 # List channels
-node /Users/USER/node scripts/dist/cli.js list-channels --limit 20
+node $HOME/node scripts/dist/cli.js list-channels --limit 20
 
 # Get recent messages from #orders
-node /Users/USER/node scripts/dist/cli.js get-history --channel C0123456789 --limit 10
+node $HOME/node scripts/dist/cli.js get-history --channel C0123456789 --limit 10
 
 # Post a message
-node /Users/USER/node scripts/dist/cli.js post-message --channel C0123456789 --text "Update: Order #1234 shipped"
+node $HOME/node scripts/dist/cli.js post-message --channel C0123456789 --text "Update: Order #1234 shipped"
 
 # Reply to a thread
-node /Users/USER/node scripts/dist/cli.js reply-thread --channel C0123456789 --thread 1234567890.123456 --text "Thanks for the update!"
+node $HOME/node scripts/dist/cli.js reply-thread --channel C0123456789 --thread 1234567890.123456 --text "Thanks for the update!"
 
 # Get thread replies
-node /Users/USER/node scripts/dist/cli.js get-thread --channel C0123456789 --thread 1234567890.123456
+node $HOME/node scripts/dist/cli.js get-thread --channel C0123456789 --thread 1234567890.123456
 
 # Add a reaction
-node /Users/USER/node scripts/dist/cli.js add-reaction --channel C0123456789 --timestamp 1234567890.123456 --reaction white_check_mark
+node $HOME/node scripts/dist/cli.js add-reaction --channel C0123456789 --timestamp 1234567890.123456 --reaction white_check_mark
 
 # List users
-node /Users/USER/node scripts/dist/cli.js get-users --limit 50
+node $HOME/node scripts/dist/cli.js get-users --limit 50
 
 # Search messages
-node /Users/USER/node scripts/dist/cli.js search-messages --query "order status" --limit 10
+node $HOME/node scripts/dist/cli.js search-messages --query "order status" --limit 10
 ```
 
 ## How It Works
