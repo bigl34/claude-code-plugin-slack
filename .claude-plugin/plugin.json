@@ -1,6 +1,6 @@
 {
   "name": "slack-manager",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Dedicated agent for Slack workspace operations via direct Slack API",
   "repository": "https://github.com/bigl34/claude-code-plugin-slack"
 }

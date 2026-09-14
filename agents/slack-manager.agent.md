@@ -1,7 +1,6 @@
 ---
 name: slack-manager
 description: Use this agent for Slack workspace operations including reading channels, posting messages, managing threads, and viewing user profiles.
-model: claude-opus-4-6
 color: secondary
 mode: subagent
 ---
