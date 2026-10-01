@@ -109,7 +109,6 @@ function positiveIntegerWithin(
 
 export class SlackMCPClient {
   private config: SlackConfig;
-  private cacheDisabled: boolean = false;
 
   constructor(configOverride?: SlackConfig) {
     if (configOverride) {
@@ -129,12 +128,10 @@ export class SlackMCPClient {
 
 
   disableCache(): void {
-    this.cacheDisabled = true;
     cache.disable();
   }
 
   enableCache(): void {
-    this.cacheDisabled = false;
     cache.enable();
   }
 
@@ -267,7 +264,7 @@ export class SlackMCPClient {
         types: includePrivate ? "public_channel,private_channel" : "public_channel",
         includeArchived,
       }),
-      { ttl: TTL.FIFTEEN_MINUTES, bypassCache: this.cacheDisabled }
+      { ttl: TTL.FIFTEEN_MINUTES }
     );
   }
 
@@ -350,7 +347,7 @@ export class SlackMCPClient {
     return cache.getOrFetch(
       cacheKey,
       async () => this.getChannelHistoryDirect(channelId, limit, oldest, latest, cursor),
-      { ttl: TTL.FIVE_MINUTES, bypassCache: this.cacheDisabled }
+      { ttl: TTL.FIVE_MINUTES }
     );
   }
 
@@ -463,7 +460,7 @@ export class SlackMCPClient {
     return cache.getOrFetch(
       cacheKey,
       () => this.getThreadRepliesDirect(channelId, threadTs, limit, oldest, latest, cursor),
-      { ttl: TTL.FIVE_MINUTES, bypassCache: this.cacheDisabled }
+      { ttl: TTL.FIVE_MINUTES }
     );
   }
 
@@ -1359,7 +1356,7 @@ export class SlackMCPClient {
         }
         return result;
       },
-      { ttl: TTL.FIVE_MINUTES, bypassCache: this.cacheDisabled }
+      { ttl: TTL.FIVE_MINUTES }
     );
   }
 
@@ -1421,7 +1418,7 @@ export class SlackMCPClient {
         );
         return response.json();
       },
-      { ttl: TTL.HOUR, bypassCache: this.cacheDisabled }
+      { ttl: TTL.HOUR }
     );
   }
 
@@ -1444,7 +1441,7 @@ export class SlackMCPClient {
         );
         return response.json();
       },
-      { ttl: TTL.FIFTEEN_MINUTES, bypassCache: this.cacheDisabled }
+      { ttl: TTL.FIFTEEN_MINUTES }
     );
   }
 
@@ -1468,7 +1465,7 @@ export class SlackMCPClient {
         );
         return response.json();
       },
-      { ttl: TTL.HOUR, bypassCache: this.cacheDisabled }
+      { ttl: TTL.HOUR }
     );
   }
 
@@ -1575,7 +1572,7 @@ export class SlackMCPClient {
           throw err;
         }
       },
-      { ttl: TTL.FIFTEEN_MINUTES, bypassCache: this.cacheDisabled },
+      { ttl: TTL.FIFTEEN_MINUTES },
     );
   }
 }

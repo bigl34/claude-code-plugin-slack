@@ -87,6 +87,37 @@ function wrapSlackMessage(msg: any): Record<string, unknown> {
   };
 }
 
+function requireAllPagesForMaxPages(allPages: boolean | undefined, maxPages: number | undefined): void {
+  if (maxPages !== undefined && allPages !== true) {
+    throw new Error("--max-pages requires --all-pages");
+  }
+}
+
+function projectMessagePage(result: any): {
+  wrappedMessages: Array<Record<string, unknown>>;
+  nextCursor: string | undefined;
+  hasMore: boolean;
+  pagesFetched: number;
+  complete: boolean;
+} {
+  const messages = (result?.messages || result || []);
+  const wrappedMessages = (Array.isArray(messages) ? messages : []).map((msg: any) => wrapSlackMessage(msg));
+  const nextCursor = result?.response_metadata?.next_cursor;
+  const hasNextCursor = typeof nextCursor === "string" && nextCursor.trim().length > 0;
+  const hasMore = result?.has_more === true || hasNextCursor;
+  const paginationShapeValid =
+    (nextCursor === undefined || typeof nextCursor === "string")
+    && (result?.has_more === undefined || typeof result?.has_more === "boolean");
+  const explicitTerminal =
+    result?.has_more === false
+    || (typeof nextCursor === "string" && nextCursor.trim().length === 0);
+  const contradictory = result?.has_more === false && hasNextCursor;
+  const complete = result?.complete === true
+    || (paginationShapeValid && explicitTerminal && !hasMore && !contradictory);
+  const pagesFetched = result?.pages_fetched ?? 1;
+  return { wrappedMessages, nextCursor, hasMore, pagesFetched, complete };
+}
+
 const commands = {
   "list-channels": createCommand(
     z.object({
@@ -152,29 +183,12 @@ const commands = {
         allPages?: boolean;
         maxPages?: number;
       };
-      if (maxPages !== undefined && allPages !== true) {
-        throw new Error("--max-pages requires --all-pages");
-      }
+      requireAllPagesForMaxPages(allPages, maxPages);
       const result = allPages === true
         ? await client.getAllChannelHistory(channel, { limit, oldest, latest, cursor, maxPages })
         : await client.getChannelHistory(channel, limit, oldest, latest, cursor);
 
-      const messages = (result?.messages || result || []);
-      const wrappedMessages = (Array.isArray(messages) ? messages : []).map((msg: any) => wrapSlackMessage(msg));
-
-      const nextCursor = result?.response_metadata?.next_cursor;
-      const hasNextCursor = typeof nextCursor === "string" && nextCursor.trim().length > 0;
-      const hasMore = result?.has_more === true || hasNextCursor;
-      const paginationShapeValid =
-        (nextCursor === undefined || typeof nextCursor === "string")
-        && (result?.has_more === undefined || typeof result?.has_more === "boolean");
-      const explicitTerminal =
-        result?.has_more === false
-        || (typeof nextCursor === "string" && nextCursor.trim().length === 0);
-      const contradictory = result?.has_more === false && hasNextCursor;
-      const complete = result?.complete === true
-        || (paginationShapeValid && explicitTerminal && !hasMore && !contradictory);
-      const pagesFetched = result?.pages_fetched ?? 1;
+      const { wrappedMessages, nextCursor, hasMore, pagesFetched, complete } = projectMessagePage(result);
 
       return buildSafeOutput(
         {
@@ -215,29 +229,12 @@ const commands = {
         allPages?: boolean;
         maxPages?: number;
       };
-      if (maxPages !== undefined && allPages !== true) {
-        throw new Error("--max-pages requires --all-pages");
-      }
+      requireAllPagesForMaxPages(allPages, maxPages);
       const result = allPages === true
         ? await client.getAllThreadReplies(channel, thread, { limit, oldest, latest, cursor, maxPages })
         : await client.getThreadReplies(channel, thread, limit, oldest, latest, cursor);
 
-      const messages = (result?.messages || result || []);
-      const wrappedMessages = (Array.isArray(messages) ? messages : []).map((msg: any) => wrapSlackMessage(msg));
-
-      const nextCursor = result?.response_metadata?.next_cursor;
-      const hasNextCursor = typeof nextCursor === "string" && nextCursor.trim().length > 0;
-      const hasMore = result?.has_more === true || hasNextCursor;
-      const paginationShapeValid =
-        (nextCursor === undefined || typeof nextCursor === "string")
-        && (result?.has_more === undefined || typeof result?.has_more === "boolean");
-      const explicitTerminal =
-        result?.has_more === false
-        || (typeof nextCursor === "string" && nextCursor.trim().length === 0);
-      const contradictory = result?.has_more === false && hasNextCursor;
-      const complete = result?.complete === true
-        || (paginationShapeValid && explicitTerminal && !hasMore && !contradictory);
-      const pagesFetched = result?.pages_fetched ?? 1;
+      const { wrappedMessages, nextCursor, hasMore, pagesFetched, complete } = projectMessagePage(result);
 
       return buildSafeOutput(
         {
